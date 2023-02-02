@@ -1,0 +1,2 @@
+export secret_key=wadaw
+go run main.go
