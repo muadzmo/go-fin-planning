@@ -12,13 +12,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// type AuthController interface {
-// 	Register(c *fiber.Ctx) error
-// 	Login(c *fiber.Ctx) error
-// 	Logout(c *fiber.Ctx) error
-// 	CheckLoggedIn(c *fiber.Ctx) error
-// }
-
 type authController struct {
 	repository repository.UserRepository
 }

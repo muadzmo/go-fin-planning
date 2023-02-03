@@ -1,2 +1,5 @@
 export secret_key=wadaw
+export db_uname=root
+export db_pass=root
+export db_host=localhost:3306
 go run main.go

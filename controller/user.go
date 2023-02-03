@@ -7,10 +7,6 @@ import (
 	"github.com/muadzmo/go-fin-planning/repository"
 )
 
-type UserController interface {
-	GetUser(c *fiber.Ctx) error
-}
-
 type userController struct {
 	repository repository.UserRepository
 }

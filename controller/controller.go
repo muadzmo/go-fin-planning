@@ -1,20 +1,23 @@
 package controller
 
 import (
-	sourceoffund "github.com/muadzmo/go-fin-planning/controller/sourceOfFund"
+	expensetype "github.com/muadzmo/go-fin-planning/controller/expenseType"
+	incometype "github.com/muadzmo/go-fin-planning/controller/incomeType"
 	"github.com/muadzmo/go-fin-planning/repository"
 )
 
 type Controllers struct {
-	AuthC      *authController
-	UserC      *userController
-	SoFMasterC *sourceoffund.SofController
+	Auth    *authController
+	User    *userController
+	Income  *incometype.IncomeTypeController
+	Expense *expensetype.ExpenseTypeController
 }
 
 func InitControllers(repo repository.Repositories) *Controllers {
 	return &Controllers{
-		AuthC:      NewAuthController(repo.UserRepo),
-		UserC:      NewUserController(repo.UserRepo),
-		SoFMasterC: sourceoffund.NewSourceOfFundMasterController(repo.PlanningRepo),
+		Auth:    NewAuthController(repo.UserRepo),
+		User:    NewUserController(repo.UserRepo),
+		Income:  incometype.NewSourceOfFundMasterController(repo.PlanningRepo),
+		Expense: expensetype.NewExpenseTypeMasterController(repo.ExpenseRepo),
 	}
 }
