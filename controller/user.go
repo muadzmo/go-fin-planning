@@ -17,7 +17,7 @@ func NewUserController(repository repository.UserRepository) *userController {
 	}
 }
 
-func (u *userController) GetUser(c *fiber.Ctx) error {
+func (u *userController) Get(c *fiber.Ctx) error {
 	str, ok := c.Locals("id").(string)
 	if !ok {
 		c.Status(fiber.StatusInternalServerError)

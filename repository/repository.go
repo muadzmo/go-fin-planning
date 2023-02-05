@@ -4,17 +4,18 @@ import "gorm.io/gorm"
 
 type Repositories struct {
 	UserRepo     *userRepository
-	PlanningRepo *planningRepository
+	IncomeRepo   *incomeRepository
 	ExpenseRepo  *expenseRepository
+	PlanningRepo *planningRepository
+	TransRepo    *transRepository
 }
 
 func InitRepositories(db *gorm.DB) *Repositories {
-	userRepo := NewUserRepository(db)
-	planningRepo := NewPlanningRepository(db)
-	expenseRepo := NewExpenseRepository(db)
 	return &Repositories{
-		UserRepo:     userRepo,
-		PlanningRepo: planningRepo,
-		ExpenseRepo:  expenseRepo,
+		UserRepo:     NewUserRepository(db),
+		IncomeRepo:   NewIncomeRepository(db),
+		ExpenseRepo:  NewExpenseRepository(db),
+		PlanningRepo: NewPlanningRepository(db),
+		TransRepo:    NewTransRepository(db),
 	}
 }

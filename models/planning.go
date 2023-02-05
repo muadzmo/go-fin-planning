@@ -1,14 +1,25 @@
 package models
 
-import (
-	"time"
-)
+import "time"
 
-type MasterIncome struct {
-	Code       string `json:"code" gorm:"primaryKey" validate:"required,min=3,alphanum"`
-	Name       string `json:"name" validate:"required,min=3"`
-	CreatedAt  time.Time
-	CreatedBy  string
-	ModifiedAt time.Time
-	ModifiedBy string
+type PlanningHeader struct {
+	Id       uint      `json:"id" gorm:"primaryKey, autoIncrement"`
+	PlanDate time.Time `json:"plan_date" gorm:"not null" validate:"required"`
+	PlanType string    `json:"plan_type" gorm:"not null" validate:"required"`
+	PlanCode string    `json:"plan_code" gorm:"not null" validate:"required"`
+	Amount   float32   `json:"amount" gorm:"not null" validate:"required"`
+	TransId  uint      `json:"trans_id"`
+}
+
+type Planning struct {
+	PlanningHeader
+	CreatedAt  time.Time `json:"-"`
+	CreatedBy  string    `json:"-"`
+	ModifiedAt time.Time `json:"-"`
+	ModifiedBy string    `json:"-"`
+}
+
+type PlanningDetail struct {
+	PlanningHeader
+	TransactionDetail
 }

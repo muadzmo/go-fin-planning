@@ -24,5 +24,5 @@ func Connect() {
 
 	DB = connection
 
-	connection.AutoMigrate(&models.User{}, &models.MasterIncome{}, &models.MasterExpense{})
+	connection.AutoMigrate(&models.User{}, &models.MasterIncome{}, &models.MasterExpense{}, &models.Planning{}, &models.Transaction{})
 }

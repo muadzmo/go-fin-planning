@@ -1,4 +1,4 @@
-package incometype
+package income
 
 import (
 	"time"
@@ -10,11 +10,11 @@ import (
 )
 
 type IncomeTypeController struct {
-	repository repository.PlanningRepository
+	repository repository.IncomeRepository
 	validate   *validator.Validate
 }
 
-func NewSourceOfFundMasterController(repository repository.PlanningRepository) *IncomeTypeController {
+func NewSourceOfFundMasterController(repository repository.IncomeRepository) *IncomeTypeController {
 	validate := validator.New()
 	return &IncomeTypeController{
 		repository,

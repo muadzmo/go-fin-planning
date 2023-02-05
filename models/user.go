@@ -5,10 +5,10 @@ import (
 )
 
 type User struct {
-	Id         uint   `json:"id"`
-	Name       string `json:"name"`
-	Email      string `json:"email" gorm:"unique"`
-	Password   []byte `json:"-"`
-	createdAt  time.Time
-	modifiedAt time.Time
+	Id         uint
+	Name       string    `json:"name"`
+	Email      string    `json:"email" gorm:"unique"`
+	Password   []byte    `json:"-"`
+	createdAt  time.Time `json:"-"`
+	modifiedAt time.Time `json:"-"`
 }

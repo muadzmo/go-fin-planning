@@ -5,40 +5,40 @@ import (
 	"gorm.io/gorm"
 )
 
-type planningRepository struct {
+type incomeRepository struct {
 	DB *gorm.DB
 }
 
-type PlanningRepository interface {
-	CreateIncomeMaster(sourceOfFund models.MasterIncome) (models.MasterIncome, error)
-	SaveIncomeMaster(sourceOfFund models.MasterIncome) (models.MasterIncome, error)
-	FindIncomeMasterByCode(sourceOfFund models.MasterIncome, code string) (models.MasterIncome, error)
+type IncomeRepository interface {
+	CreateIncomeMaster(income models.MasterIncome) (models.MasterIncome, error)
+	SaveIncomeMaster(income models.MasterIncome) (models.MasterIncome, error)
+	FindIncomeMasterByCode(income models.MasterIncome, code string) (models.MasterIncome, error)
 	FindAllIncomeMaster() ([]models.MasterIncome, error)
 }
 
-func NewPlanningRepository(db *gorm.DB) *planningRepository {
-	return &planningRepository{
+func NewIncomeRepository(db *gorm.DB) *incomeRepository {
+	return &incomeRepository{
 		DB: db,
 	}
 }
 
-func (p *planningRepository) CreateIncomeMaster(sourceOfFund models.MasterIncome) (models.MasterIncome, error) {
-	err := p.DB.Create(&sourceOfFund)
-	return sourceOfFund, err.Error
+func (i *incomeRepository) CreateIncomeMaster(income models.MasterIncome) (models.MasterIncome, error) {
+	err := i.DB.Create(&income)
+	return income, err.Error
 }
 
-func (p *planningRepository) SaveIncomeMaster(sourceOfFund models.MasterIncome) (models.MasterIncome, error) {
-	err := p.DB.Save(&sourceOfFund)
-	return sourceOfFund, err.Error
+func (i *incomeRepository) SaveIncomeMaster(income models.MasterIncome) (models.MasterIncome, error) {
+	err := i.DB.Save(&income)
+	return income, err.Error
 }
 
-func (p *planningRepository) FindIncomeMasterByCode(sourceOfFund models.MasterIncome, code string) (models.MasterIncome, error) {
-	err := p.DB.Where("code = ?", code).First(&sourceOfFund)
-	return sourceOfFund, err.Error
+func (i *incomeRepository) FindIncomeMasterByCode(income models.MasterIncome, code string) (models.MasterIncome, error) {
+	err := i.DB.Where("code = ?", code).First(&income)
+	return income, err.Error
 }
 
-func (p *planningRepository) FindAllIncomeMaster() ([]models.MasterIncome, error) {
+func (i *incomeRepository) FindAllIncomeMaster() ([]models.MasterIncome, error) {
 	var sourcesOfFund []models.MasterIncome
-	err := p.DB.Find(&sourcesOfFund)
+	err := i.DB.Find(&sourcesOfFund)
 	return sourcesOfFund, err.Error
 }

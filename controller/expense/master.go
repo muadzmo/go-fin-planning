@@ -1,4 +1,4 @@
-package expensetype
+package expense
 
 import (
 	"time"
@@ -94,7 +94,7 @@ func (e *ExpenseTypeController) GetMaster(c *fiber.Ctx) error {
 	data, err := e.repository.FindExpenseMasterByCode(data, c.Params("code"))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": err.Error(),
+			"message": "97: " + err.Error(),
 		})
 	}
 
