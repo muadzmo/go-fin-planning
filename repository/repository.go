@@ -8,6 +8,7 @@ type Repositories struct {
 	ExpenseRepo  *expenseRepository
 	PlanningRepo *planningRepository
 	TransRepo    *transRepository
+	BalanceRepo  *balanceRepository
 }
 
 func InitRepositories(db *gorm.DB) *Repositories {
@@ -17,5 +18,6 @@ func InitRepositories(db *gorm.DB) *Repositories {
 		ExpenseRepo:  NewExpenseRepository(db),
 		PlanningRepo: NewPlanningRepository(db),
 		TransRepo:    NewTransRepository(db),
+		BalanceRepo:  NewBalanceRepository(db),
 	}
 }

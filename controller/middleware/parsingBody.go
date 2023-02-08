@@ -1,6 +1,7 @@
-package controller
+package middleware
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -9,18 +10,16 @@ import (
 	"github.com/muadzmo/go-fin-planning/repository"
 )
 
-type middlewareController struct {
-	income   repository.IncomeRepository
-	expense  repository.ExpenseRepository
-	trans    repository.TransRepository
+type ParsingController struct {
+	balance  repository.BalanceRepository
 	validate *validator.Validate
 }
 
-func NewMiddlewareController(incomeRepo repository.IncomeRepository, expenseRepo repository.ExpenseRepository, transRepo repository.TransRepository) *middlewareController {
-	return &middlewareController{incomeRepo, expenseRepo, transRepo, validator.New()}
+func NewParsingController(balance repository.BalanceRepository) *ParsingController {
+	return &ParsingController{balance, validator.New()}
 }
 
-func (m *middlewareController) ParsingPlanning(c *fiber.Ctx) error {
+func (m *ParsingController) ParsingPlanning(c *fiber.Ctx) error {
 	var data models.Planning
 	if err := c.BodyParser(&data); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
@@ -31,7 +30,7 @@ func (m *middlewareController) ParsingPlanning(c *fiber.Ctx) error {
 	err := m.validate.Struct(data)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "planning 51: " + err.Error(),
+			"message": "parsing planning: " + err.Error(),
 		})
 	}
 
@@ -39,12 +38,12 @@ func (m *middlewareController) ParsingPlanning(c *fiber.Ctx) error {
 	data.ModifiedAt = time.Now()
 
 	c.Locals("data", data)
-	c.Locals("tipe", data.PlanType)
-	c.Locals("code", data.PlanCode)
+	c.Locals("code", data.BalanceCode)
 	return c.Next()
 }
 
-func (m *middlewareController) ParsingTransaction(c *fiber.Ctx) error {
+func (m *ParsingController) ParsingTransaction(c *fiber.Ctx) error {
+	fmt.Println("ParsingTransaction:", len(c.Route().Handlers), c.Route().Handlers, c.Route().Name)
 	var data models.Transaction
 	if err := c.BodyParser(&data); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
@@ -55,7 +54,7 @@ func (m *middlewareController) ParsingTransaction(c *fiber.Ctx) error {
 	err := m.validate.Struct(data)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "planning 51: " + err.Error(),
+			"message": "parsing transaction: " + err.Error(),
 		})
 	}
 
@@ -63,33 +62,29 @@ func (m *middlewareController) ParsingTransaction(c *fiber.Ctx) error {
 	data.ModifiedAt = time.Now()
 
 	c.Locals("data", data)
-	c.Locals("tipe", data.TransType)
-	c.Locals("code", data.TransCode)
+	c.Locals("code", data.BalanceCode)
+
 	return c.Next()
 }
 
-func (m *middlewareController) ValidateInput(c *fiber.Ctx) error {
-	var err error
-
-	tipe := c.Locals("tipe").(string)
-	code := c.Locals("code").(string)
-
-	if tipe != "expense" && tipe != "income" {
+func (m *ParsingController) ParsingBalance(c *fiber.Ctx) error {
+	var data models.Balance
+	if err := c.BodyParser(&data); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "Plan type is not found",
+			"message": err.Error(),
 		})
 	}
 
-	if tipe == "income" {
-		_, err = m.income.FindIncomeMasterByCode(code)
-	} else {
-		_, err = m.expense.FindExpenseMasterByCode(code)
-	}
+	err := m.validate.Struct(data)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "Master code is not found",
+			"message": "parsing balance: " + err.Error(),
 		})
 	}
 
+	data.ModifiedAt = time.Now()
+	data.ModifiedBy = c.Locals("email").(string)
+
+	c.Locals("data", data)
 	return c.Next()
 }

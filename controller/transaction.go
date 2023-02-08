@@ -127,14 +127,14 @@ func (t *transController) Delete(c *fiber.Ctx) error {
 		})
 	}
 
-	data, err := t.repository.FindTransById(uint(id))
+	_, err = t.repository.FindTransById(uint(id))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": err.Error(),
 		})
 	}
 
-	err = t.repository.DeleteTrans(data)
+	err = t.repository.DeleteTrans(uint(id))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": err.Error(),

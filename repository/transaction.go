@@ -10,21 +10,26 @@ type transRepository struct {
 }
 
 type TransRepository interface {
-	FindTransById(id uint) (models.Transaction, error)
+	FindTransById(id uint) (models.TransactionDetail, error)
 	CreateTrans(data models.Transaction) (models.Transaction, error)
 	FindAllTrans() ([]models.Transaction, error)
 	SaveTrans(data models.Transaction) (models.Transaction, error)
-	DeleteTrans(data models.Transaction) error
+	DeleteTrans(id uint) error
 }
 
 func NewTransRepository(db *gorm.DB) *transRepository {
 	return &transRepository{DB: db}
 }
 
-func (t *transRepository) FindTransById(id uint) (models.Transaction, error) {
-	var trans models.Transaction
-	err := t.DB.Where("id = ?", id).First(&trans)
-	return trans, err.Error
+func (t *transRepository) FindTransById(id uint) (models.TransactionDetail, error) {
+	var transDetail models.TransactionDetail
+	err := t.DB.Model(&models.Transaction{}).
+		Select("id, trans_date, amount, plan_id, code, b.name, b.periodic, b.type").
+		Joins("join balances b on transactions.balance_code = b.code").
+		Where("transactions.id = ?", id).
+		Scan(&transDetail)
+
+	return transDetail, err.Error
 }
 
 func (t *transRepository) CreateTrans(data models.Transaction) (models.Transaction, error) {
@@ -43,7 +48,8 @@ func (t *transRepository) SaveTrans(data models.Transaction) (models.Transaction
 	return data, err.Error
 }
 
-func (t *transRepository) DeleteTrans(data models.Transaction) error {
-	err := t.DB.Where("id = ?", data.Id).Delete(&data)
+func (t *transRepository) DeleteTrans(id uint) error {
+	var data models.Transaction
+	err := t.DB.Where("id = ?", id).Delete(&data)
 	return err.Error
 }

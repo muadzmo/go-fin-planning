@@ -3,6 +3,7 @@ package controller
 import (
 	expense "github.com/muadzmo/go-fin-planning/controller/expense"
 	income "github.com/muadzmo/go-fin-planning/controller/income"
+	"github.com/muadzmo/go-fin-planning/controller/middleware"
 	"github.com/muadzmo/go-fin-planning/repository"
 )
 
@@ -13,7 +14,9 @@ type Controllers struct {
 	Expense     *expense.ExpenseTypeController
 	Planning    *planningController
 	Transaction *transController
-	Middleware  *middlewareController
+	Balance     *balanceController
+	Parsing     *middleware.ParsingController
+	Validate    *middleware.ValidateController
 }
 
 func InitControllers(repo repository.Repositories) *Controllers {
@@ -24,6 +27,8 @@ func InitControllers(repo repository.Repositories) *Controllers {
 		Expense:     expense.NewExpenseTypeMasterController(repo.ExpenseRepo),
 		Planning:    NewPlanningController(repo.PlanningRepo, repo.IncomeRepo, repo.ExpenseRepo, repo.TransRepo),
 		Transaction: NewTransController(repo.TransRepo, repo.IncomeRepo, repo.ExpenseRepo, repo.PlanningRepo),
-		Middleware:  NewMiddlewareController(repo.IncomeRepo, repo.ExpenseRepo, repo.TransRepo),
+		Balance:     NewBalanceController(repo.BalanceRepo),
+		Parsing:     middleware.NewParsingController(repo.BalanceRepo),
+		Validate:    middleware.NewValidateController(repo.BalanceRepo),
 	}
 }

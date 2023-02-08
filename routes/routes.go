@@ -30,12 +30,12 @@ func Setup(app *fiber.App) {
 	v1.Get("/expensemaster/detail/:code", controller.Expense.GetMaster)
 	v1.Delete("/expensemaster/detail/:code", controller.Expense.DeleteMaster)
 
-	parsingPlanning := controller.Middleware.ParsingPlanning
-	parsingTransaction := controller.Middleware.ParsingTransaction
-	validateInput := controller.Middleware.ValidateInput
+	parsingPlanning := controller.Parsing.ParsingPlanning
+	parsingTransaction := controller.Parsing.ParsingTransaction
+	validateInput := controller.Validate.PlanningTransaction
 	v1.Get("/planning/list", controller.Planning.GetAll)
 	v1.Post("/planning/add", parsingPlanning, validateInput, controller.Planning.Create)
-	v1.Post("/planning/detail/:id", parsingPlanning, validateInput, controller.Middleware.ParsingPlanning, controller.Planning.Save)
+	v1.Post("/planning/detail/:id", parsingPlanning, validateInput, controller.Planning.Save)
 	v1.Get("/planning/detail/:id", controller.Planning.GetById)
 
 	v1.Get("/transaction/list", controller.Transaction.GetAll)
@@ -43,4 +43,10 @@ func Setup(app *fiber.App) {
 	v1.Get("/transaction/detail/:id", controller.Transaction.GetById)
 	v1.Post("/transaction/detail/:id", parsingTransaction, validateInput, controller.Transaction.Save)
 	v1.Delete("/transaction/detail/:id", controller.Transaction.Delete)
+
+	v1.Get("/balance/list", controller.Balance.GetAllMaster)
+	v1.Post("/balance/add", controller.Parsing.ParsingBalance, controller.Balance.Add)
+	v1.Get("/balance/detail/:code", controller.Balance.GetMaster)
+	v1.Post("/balance/detail/:code", controller.Balance.GetMaster, controller.Balance.Save)
+	v1.Delete("/balance/detail/:code", controller.Balance.Delete)
 }
