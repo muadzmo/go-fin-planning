@@ -21,4 +21,5 @@ type TransactionHeader struct {
 type TransactionDetail struct {
 	TransactionHeader
 	BalanceHeader
+	PlanningHeader
 }

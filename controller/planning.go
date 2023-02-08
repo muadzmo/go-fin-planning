@@ -97,24 +97,5 @@ func (p *planningController) GetById(c *fiber.Ctx) error {
 		})
 	}
 
-	var detail models.PlanningDetail
-	// detail.Amount = data.Amount
-	detail.Id = data.Id
-	// detail.BalanceCode = data.PlanCode
-	// detail.PlanType = data.PlanType
-	// detail.PlanDate = data.PlanDate
-	// detail.TransId = data.TransId
-
-	if detail.TransId != 0 {
-		_, err := p.transaction.FindTransById(detail.TransId)
-		if err != nil {
-			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-				"message": err.Error(),
-			})
-		}
-		// detail.TransDate = transDetail.TransDate
-		// detail.TransType = transDetail.TransType
-	}
-
-	return c.JSON(detail)
+	return c.JSON(data)
 }

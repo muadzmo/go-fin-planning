@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/muadzmo/go-fin-planning/models"
 	"gorm.io/gorm"
 )
@@ -11,7 +13,7 @@ type planningRepository struct {
 
 type PlanningRepository interface {
 	FindAllPlanning() ([]models.Planning, error)
-	FindPlanningById(id uint) (models.Planning, error)
+	FindPlanningById(id uint) (models.PlanningDetail, error)
 	CreatePlanning(data models.Planning) (models.Planning, error)
 	SavePlanning(data models.Planning) (models.Planning, error)
 }
@@ -26,9 +28,15 @@ func (p *planningRepository) FindAllPlanning() ([]models.Planning, error) {
 	return planning, err.Error
 }
 
-func (p *planningRepository) FindPlanningById(id uint) (models.Planning, error) {
-	var data models.Planning
-	err := p.DB.Where("id = ?", id).First(&data)
+func (p *planningRepository) FindPlanningById(id uint) (models.PlanningDetail, error) {
+	var data models.PlanningDetail
+	// err := p.DB.Where("id = ?", id).First(&data)
+	err := p.DB.Model(&models.Planning{}).
+		Select("plannings.id, plan_date, amount, code, b.name, b.periodic, b.type").
+		Joins("join balances b on plannings.balance_code = b.code").
+		Where("plannings.id = ?", id).
+		Scan(&data)
+	fmt.Println(data)
 	return data, err.Error
 }
 

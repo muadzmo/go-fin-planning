@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -43,19 +42,14 @@ func (m *ParsingController) ParsingPlanning(c *fiber.Ctx) error {
 }
 
 func (m *ParsingController) ParsingTransaction(c *fiber.Ctx) error {
-	fmt.Println("ParsingTransaction:", len(c.Route().Handlers), c.Route().Handlers, c.Route().Name)
 	var data models.Transaction
 	if err := c.BodyParser(&data); err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"message": err.Error()})
 	}
 
 	err := m.validate.Struct(data)
 	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "parsing transaction: " + err.Error(),
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": err.Error()})
 	}
 
 	data.ModifiedBy = c.Locals("email").(string)
