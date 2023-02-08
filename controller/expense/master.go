@@ -61,7 +61,7 @@ func (e *ExpenseTypeController) SaveMaster(c *fiber.Ctx) error {
 		})
 	}
 
-	dataMaster, err := e.repository.FindExpenseMasterByCode(data, c.Params("code"))
+	dataMaster, err := e.repository.FindExpenseMasterByCode(c.Params("code"))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": err.Error(),
@@ -90,8 +90,7 @@ func (e *ExpenseTypeController) SaveMaster(c *fiber.Ctx) error {
 }
 
 func (e *ExpenseTypeController) GetMaster(c *fiber.Ctx) error {
-	var data models.MasterExpense
-	data, err := e.repository.FindExpenseMasterByCode(data, c.Params("code"))
+	data, err := e.repository.FindExpenseMasterByCode(c.Params("code"))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": "97: " + err.Error(),
@@ -102,8 +101,7 @@ func (e *ExpenseTypeController) GetMaster(c *fiber.Ctx) error {
 }
 
 func (e *ExpenseTypeController) DeleteMaster(c *fiber.Ctx) error {
-	var data models.MasterExpense
-	data, err := e.repository.FindExpenseMasterByCode(data, c.Params("code"))
+	data, err := e.repository.FindExpenseMasterByCode(c.Params("code"))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": err.Error(),

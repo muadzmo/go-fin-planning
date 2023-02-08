@@ -13,6 +13,7 @@ type Controllers struct {
 	Expense     *expense.ExpenseTypeController
 	Planning    *planningController
 	Transaction *transController
+	Middleware  *middlewareController
 }
 
 func InitControllers(repo repository.Repositories) *Controllers {
@@ -23,5 +24,6 @@ func InitControllers(repo repository.Repositories) *Controllers {
 		Expense:     expense.NewExpenseTypeMasterController(repo.ExpenseRepo),
 		Planning:    NewPlanningController(repo.PlanningRepo, repo.IncomeRepo, repo.ExpenseRepo, repo.TransRepo),
 		Transaction: NewTransController(repo.TransRepo, repo.IncomeRepo, repo.ExpenseRepo, repo.PlanningRepo),
+		Middleware:  NewMiddlewareController(repo.IncomeRepo, repo.ExpenseRepo, repo.TransRepo),
 	}
 }

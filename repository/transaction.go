@@ -14,6 +14,7 @@ type TransRepository interface {
 	CreateTrans(data models.Transaction) (models.Transaction, error)
 	FindAllTrans() ([]models.Transaction, error)
 	SaveTrans(data models.Transaction) (models.Transaction, error)
+	DeleteTrans(data models.Transaction) error
 }
 
 func NewTransRepository(db *gorm.DB) *transRepository {
@@ -22,7 +23,7 @@ func NewTransRepository(db *gorm.DB) *transRepository {
 
 func (t *transRepository) FindTransById(id uint) (models.Transaction, error) {
 	var trans models.Transaction
-	err := t.DB.First(&trans)
+	err := t.DB.Where("id = ?", id).First(&trans)
 	return trans, err.Error
 }
 
@@ -43,6 +44,6 @@ func (t *transRepository) SaveTrans(data models.Transaction) (models.Transaction
 }
 
 func (t *transRepository) DeleteTrans(data models.Transaction) error {
-	err := t.DB.Delete(&data)
+	err := t.DB.Where("id = ?", data.Id).Delete(&data)
 	return err.Error
 }

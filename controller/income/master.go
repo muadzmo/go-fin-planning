@@ -58,7 +58,7 @@ func (s *IncomeTypeController) SaveMaster(c *fiber.Ctx) error {
 		})
 	}
 
-	dataMaster, err := s.repository.FindIncomeMasterByCode(data, c.Params("code"))
+	dataMaster, err := s.repository.FindIncomeMasterByCode(c.Params("code"))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": err.Error(),
@@ -97,8 +97,7 @@ func (s *IncomeTypeController) GetAllMaster(c *fiber.Ctx) error {
 }
 
 func (s *IncomeTypeController) GetMaster(c *fiber.Ctx) error {
-	var data models.MasterIncome
-	data, err := s.repository.FindIncomeMasterByCode(data, c.Params("code"))
+	data, err := s.repository.FindIncomeMasterByCode(c.Params("code"))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": err.Error(),

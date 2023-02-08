@@ -12,7 +12,7 @@ type expenseRepository struct {
 type ExpenseRepository interface {
 	CreateExpenseMaster(expense models.MasterExpense) (models.MasterExpense, error)
 	FindAllExpenseMaster() ([]models.MasterExpense, error)
-	FindExpenseMasterByCode(expense models.MasterExpense, code string) (models.MasterExpense, error)
+	FindExpenseMasterByCode(code string) (models.MasterExpense, error)
 	SaveExpenseMaster(expense models.MasterExpense) (models.MasterExpense, error)
 	DeleteExpenseMaster(expense models.MasterExpense, code string) error
 }
@@ -34,7 +34,8 @@ func (e *expenseRepository) FindAllExpenseMaster() ([]models.MasterExpense, erro
 	return expenses, err.Error
 }
 
-func (e *expenseRepository) FindExpenseMasterByCode(expense models.MasterExpense, code string) (models.MasterExpense, error) {
+func (e *expenseRepository) FindExpenseMasterByCode(code string) (models.MasterExpense, error) {
+	var expense models.MasterExpense
 	err := e.DB.Where("code = ?", code).First(&expense)
 	return expense, err.Error
 }

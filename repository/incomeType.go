@@ -12,7 +12,7 @@ type incomeRepository struct {
 type IncomeRepository interface {
 	CreateIncomeMaster(income models.MasterIncome) (models.MasterIncome, error)
 	SaveIncomeMaster(income models.MasterIncome) (models.MasterIncome, error)
-	FindIncomeMasterByCode(income models.MasterIncome, code string) (models.MasterIncome, error)
+	FindIncomeMasterByCode(code string) (models.MasterIncome, error)
 	FindAllIncomeMaster() ([]models.MasterIncome, error)
 }
 
@@ -32,7 +32,8 @@ func (i *incomeRepository) SaveIncomeMaster(income models.MasterIncome) (models.
 	return income, err.Error
 }
 
-func (i *incomeRepository) FindIncomeMasterByCode(income models.MasterIncome, code string) (models.MasterIncome, error) {
+func (i *incomeRepository) FindIncomeMasterByCode(code string) (models.MasterIncome, error) {
+	var income models.MasterIncome
 	err := i.DB.Where("code = ?", code).First(&income)
 	return income, err.Error
 }

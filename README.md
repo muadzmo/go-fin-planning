@@ -4,4 +4,5 @@ I am using go fiber, gorm and trying to implementing design pattern (possibly re
 I am open for any suggestions in making this project.
 
 TODO:
-Creating connection between Transaction and Planning
+Focus on Transaction
+Creating connection between Transaction and Planning later

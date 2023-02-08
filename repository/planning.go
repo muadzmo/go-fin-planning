@@ -11,7 +11,7 @@ type planningRepository struct {
 
 type PlanningRepository interface {
 	FindAllPlanning() ([]models.Planning, error)
-	FindPlanningById(data models.Planning, id uint) (models.Planning, error)
+	FindPlanningById(id uint) (models.Planning, error)
 	CreatePlanning(data models.Planning) (models.Planning, error)
 	SavePlanning(data models.Planning) (models.Planning, error)
 }
@@ -26,7 +26,8 @@ func (p *planningRepository) FindAllPlanning() ([]models.Planning, error) {
 	return planning, err.Error
 }
 
-func (p *planningRepository) FindPlanningById(data models.Planning, id uint) (models.Planning, error) {
+func (p *planningRepository) FindPlanningById(id uint) (models.Planning, error) {
+	var data models.Planning
 	err := p.DB.Where("id = ?", id).First(&data)
 	return data, err.Error
 }

@@ -37,33 +37,7 @@ func (t *transController) Create(c *fiber.Ctx) error {
 
 	data.CreatedBy = c.Locals("email").(string)
 
-	err := t.validate.Struct(data)
-	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "Transaction validate: " + err.Error(),
-		})
-	}
-
-	if data.TransType != "expense" && data.TransType != "income" {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "Plan type is not found",
-		})
-	}
-
-	if data.TransType == "income" {
-		var income models.MasterIncome
-		_, err = t.income.FindIncomeMasterByCode(income, data.TransCode)
-	} else {
-		var expense models.MasterExpense
-		_, err = t.expense.FindExpenseMasterByCode(expense, data.TransCode)
-	}
-	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "Master code is not found",
-		})
-	}
-
-	data, err = t.repository.CreateTrans(data)
+	data, err := t.repository.CreateTrans(data)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": "planning 77: " + err.Error(),
@@ -143,4 +117,31 @@ func (t *transController) Save(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(data)
+}
+
+func (t *transController) Delete(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	data, err := t.repository.FindTransById(uint(id))
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	err = t.repository.DeleteTrans(data)
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Delete Successfully",
+	})
 }

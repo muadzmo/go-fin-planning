@@ -2,7 +2,6 @@ package controller
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -39,45 +38,13 @@ func (p *planningController) GetAll(c *fiber.Ctx) error {
 }
 
 func (p *planningController) Create(c *fiber.Ctx) error {
-	var data models.Planning
-	if err := c.BodyParser(&data); err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "Create " + err.Error(),
-		})
-	}
-
+	data := c.Locals("data").(models.Planning)
 	data.CreatedBy = c.Locals("email").(string)
 
-	err := p.validate.Struct(data)
+	data, err := p.repository.CreatePlanning(data)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "planning 51: " + err.Error(),
-		})
-	}
-
-	if data.PlanType != "expense" && data.PlanType != "income" {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "Plan type is not found",
-		})
-	}
-
-	if data.PlanType == "income" {
-		var income models.MasterIncome
-		_, err = p.income.FindIncomeMasterByCode(income, data.PlanCode)
-	} else {
-		var expense models.MasterExpense
-		_, err = p.expense.FindExpenseMasterByCode(expense, data.PlanCode)
-	}
-	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "Master code is not found",
-		})
-	}
-
-	data, err = p.repository.CreatePlanning(data)
-	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": "planning 77: " + err.Error(),
+			"message": err.Error(),
 		})
 	}
 
@@ -85,23 +52,9 @@ func (p *planningController) Create(c *fiber.Ctx) error {
 }
 
 func (p *planningController) Save(c *fiber.Ctx) error {
-	var data models.Planning
-	if err := c.BodyParser(&data); err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": err.Error(),
-		})
-	}
+	data := c.Locals("data").(models.Planning)
 
-	data.ModifiedBy = c.Locals("email").(string)
-	data.ModifiedAt = time.Now()
-
-	err := p.validate.Struct(data)
-	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": err.Error(),
-		})
-	}
-
+	// get id by url param
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
@@ -109,14 +62,15 @@ func (p *planningController) Save(c *fiber.Ctx) error {
 		})
 	}
 
-	var origin models.Planning
-	origin, err = p.repository.FindPlanningById(origin, uint(id))
+	// get previous data, if not exist return false
+	_, err = p.repository.FindPlanningById(uint(id))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": err.Error(),
 		})
 	}
 
+	// save data
 	data.Id = uint(id)
 	data, err = p.repository.SavePlanning(data)
 	if err != nil {
@@ -136,8 +90,7 @@ func (p *planningController) GetById(c *fiber.Ctx) error {
 		})
 	}
 
-	var data models.Planning
-	data, err = p.repository.FindPlanningById(data, uint(id))
+	data, err := p.repository.FindPlanningById(uint(id))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": err.Error(),
@@ -159,7 +112,6 @@ func (p *planningController) GetById(c *fiber.Ctx) error {
 				"message": err.Error(),
 			})
 		}
-
 		detail.TransDate = transDetail.TransDate
 		detail.TransType = transDetail.TransType
 	}
