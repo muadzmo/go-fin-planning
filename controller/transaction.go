@@ -104,7 +104,14 @@ func (t *transController) Save(c *fiber.Ctx) error {
 	_, err = t.repository.FindTransById(uint(id))
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"message": err.Error(),
+			"message": "transaction" + err.Error(),
+		})
+	}
+
+	_, err = t.planning.FindPlanningById(data.PlanId)
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"message": "plan" + err.Error(),
 		})
 	}
 

@@ -24,12 +24,11 @@ func NewTransRepository(db *gorm.DB) *transRepository {
 func (t *transRepository) FindTransById(id uint) (models.TransactionDetail, error) {
 	var transDetail models.TransactionDetail
 	err := t.DB.Model(&models.Transaction{}).
-		Select("transactions.id, trans_date, transactions.amount, plan_id, code, b.name, b.periodic, b.type, p.plan_date PlanDate, p.amount PlanAmount").
+		Select("transactions.id, trans_date, transactions.amount, code, b.name, b.periodic, b.type, plan_id, p.plan_date PlanDate, p.amount").
 		Joins("join balances b on transactions.balance_code = b.code").
 		Joins("left join plannings p on p.id = transactions.plan_id").
 		Where("transactions.id = ?", id).
-		Scan(&transDetail)
-
+		First(&transDetail)
 	return transDetail, err.Error
 }
 

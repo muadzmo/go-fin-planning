@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/muadzmo/go-fin-planning/models"
 	"gorm.io/gorm"
 )
@@ -30,13 +28,11 @@ func (p *planningRepository) FindAllPlanning() ([]models.Planning, error) {
 
 func (p *planningRepository) FindPlanningById(id uint) (models.PlanningDetail, error) {
 	var data models.PlanningDetail
-	// err := p.DB.Where("id = ?", id).First(&data)
 	err := p.DB.Model(&models.Planning{}).
 		Select("plannings.id, plan_date, amount, code, b.name, b.periodic, b.type").
 		Joins("join balances b on plannings.balance_code = b.code").
 		Where("plannings.id = ?", id).
-		Scan(&data)
-	fmt.Println(data)
+		First(&data)
 	return data, err.Error
 }
 
